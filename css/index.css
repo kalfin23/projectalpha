@@ -55,13 +55,6 @@
   }
 }
 
-.btn-wrapper {
-  position: absolute;
-  bottom: 10vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
 
 @keyframes typing {
   from {
