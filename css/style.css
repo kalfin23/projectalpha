@@ -1232,4 +1232,28 @@ body {
   animation-play-state: paused !important;
 }
 
+.games-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 100;
+  padding: 12px 20px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px);
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(14px, 2.5vw, 18px);
+  text-decoration: none;
+  text-shadow: 0px 0px 10px white;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.games-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
 /*# sourceMappingURL=style.css.map */

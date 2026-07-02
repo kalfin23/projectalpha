@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu 💐</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #ffe6ee 0%, #fff0f5 40%, #ffe9f2 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px; overflow-x: hidden;
+  }
+  .card {
+    background: rgba(255,255,255,.92);
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(233,30,99,.15);
+    max-width: 440px; width: 100%;
+    padding: 32px 28px;
+    text-align: center;
+    position: relative; z-index: 2;
+  }
+  h1 { color: #d81b60; font-size: 1.5rem; margin-bottom: 8px; }
+  .sub { color: #ad6a85; font-size: .95rem; margin-bottom: 20px; }
+  .progress { height: 8px; background: #fce4ec; border-radius: 99px; margin-bottom: 24px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg,#f06292,#d81b60); width: 0%; transition: width .4s ease; border-radius: 99px; }
+  .q-num { font-size: .8rem; color: #e91e63; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+  .q-text { font-size: 1.15rem; color: #4a2331; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+  input[type=text], textarea {
+    width: 100%; padding: 13px 16px;
+    border: 2px solid #f8bbd0; border-radius: 14px;
+    font-size: 1rem; font-family: inherit;
+    outline: none; transition: border .2s;
+    background: #fff;
+  }
+  input[type=text]:focus, textarea:focus { border-color: #e91e63; }
+  textarea { resize: none; min-height: 90px; }
+  .opts { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    padding: 13px 16px; border: 2px solid #f8bbd0; border-radius: 14px;
+    background: #fff; cursor: pointer; font-size: 1rem; text-align: left;
+    transition: all .15s; font-family: inherit; color: #4a2331;
+  }
+  .opt:hover { border-color: #f06292; background: #fff5f8; }
+  .opt.selected { border-color: #d81b60; background: #fce4ec; font-weight: 600; }
+  .btn {
+    margin-top: 22px; padding: 13px 36px;
+    background: linear-gradient(135deg,#f06292,#d81b60);
+    color: #fff; border: none; border-radius: 99px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(216,27,96,.35);
+    transition: transform .15s, box-shadow .15s;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 9px 24px rgba(216,27,96,.45); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .feedback { margin-top: 14px; font-size: .95rem; min-height: 22px; font-weight: 600; }
+  .feedback.ok { color: #2e7d32; }
+  .feedback.no { color: #c62828; }
+  .hearts { font-size: 2.4rem; margin-bottom: 12px; }
+  .hidden { display: none; }
+  .shake { animation: shake .4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+
+  /* ---------- Garden ---------- */
+  #garden-screen { max-width: 520px; }
+  #garden { width: 100%; height: auto; display: block; margin: 4px auto 0; cursor: pointer; touch-action: none; }
+  .love-note {
+    margin-top: 18px; color: #863a56; font-size: 1rem; line-height: 1.7;
+    background: #fff5f8; border-radius: 16px; padding: 18px;
+    border: 1.5px dashed #f48fb1;
+  }
+  .petal {
+    position: fixed; top: -30px; z-index: 1;
+    font-size: 20px; pointer-events: none;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: .7; }
+  }
+  .pop { animation: pop .5s ease; }
+  @keyframes pop { 0%{transform:scale(.6);opacity:0} 70%{transform:scale(1.05)} 100%{transform:scale(1)} }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     EDIT DI SINI, BAGAS! 💌
+     - NAMA: ganti nama panggilan pasanganmu
+     - Pertanyaan tipe "quiz": isi 'a' (jawaban benar, huruf kecil semua)
+       atau 'opts' + 'correct' untuk pilihan ganda
+     - Pertanyaan tipe "free": jawaban bebas, apapun diterima
+============================================================ -->
+<script>
+const NAMA = "Shafira";
+const PENGIRIM = "Kalfin";
+const EMAIL_TUJUAN = "bagasaminullah@gmail.com";  // jawaban dikirim ke sini
+
+const QUESTIONS = [
+  { type: "quiz-choice",   // tanpa 'correct' → semua pilihan boleh
+    q: "Kalau aku lagi bad mood, apa yang akan kamu lakukan? 🥺",
+    opts: ["Meluk diem-diem 🫂", "Beliin makanan 🍜", "Kasih waktu sendiri dulu 🌙", "Ajak jalan-jalan 🚶"] },
+
+  { type: "free",
+    q: "Menurut kamu, makanan favorit aku apa? 🍽️" },
+
+  { type: "free",
+    q: "Momen paling berkesan buat kamu selama kita bareng, apa? ✨" },
+
+  { type: "quiz-choice",
+    q: "Warna favorit aku apa hayooo? 🎨",
+    opts: ["Biru 💙", "Hitam 🖤", "Hijau 💚", "Merah ❤️"],
+    correct: 0 },
+
+  { type: "free",
+    q: "Satu hal kecil yang aku lakuin, yang diam-diam bikin kamu senyum? 😊" },
+
+  { type: "quiz-choice", locked: true,   // A/B/D tidak bisa dipilih 😏
+    q: "Kamu sayang aku atau tidak? 💘",
+    opts: ["A. Sayang Aja", "B. Biasa Aja", "C. Sayang Banget 💖", "D. Yaudah Rahasia"],
+    correct: 2 },
+
+  { type: "free",
+    q: "Kalau bisa liburan berdua ke mana aja, kamu pilih ke mana? Kenapa? 🌏" },
+
+  { type: "free",
+    q: "Tulis satu harapan kamu buat kita di masa depan 💌" },
+];
+</script>
+
+<!-- Intro -->
+<div class="card pop" id="intro-screen">
+  <div class="hearts">💐💕</div>
+  <h1 id="intro-title">Hai!</h1>
+  <p class="sub">Ada sedikit permainan buat kamu.<br>Jawab pertanyaan-pertanyaannya, dan ada hadiah kecil di akhir 🎁</p>
+  <button class="btn" onclick="startGame()">Mulai 💖</button>
+</div>
+
+<!-- Quiz -->
+<div class="card hidden" id="quiz-screen">
+  <div class="progress"><div class="progress-fill" id="pbar"></div></div>
+  <div class="q-num" id="qnum"></div>
+  <div class="q-text" id="qtext"></div>
+  <div id="qbody"></div>
+  <div class="feedback" id="fb"></div>
+  <button class="btn" id="nextBtn" onclick="submitAnswer()">Jawab ➜</button>
+</div>
+
+<!-- Reward -->
+<div class="card hidden" id="garden-screen">
+  <div class="hearts">🤍💙</div>
+  <h1>Selamat, kamu berhasil! 💐</h1>
+  <p class="sub">Ini buket bunga khusus buat kamu — gerbera putih, hydrangea biru &amp; baby's breath 🤍💙</p>
+  <canvas id="garden"></canvas>
+  <div class="love-note" id="loveNote"></div>
+
+</div>
+
+<script>
+let idx = 0, selectedOpt = null, answers = [];
+
+document.getElementById("intro-title").textContent = "Hai, " + NAMA + "! 💕";
+
+function startGame() {
+  document.getElementById("intro-screen").classList.add("hidden");
+  const qs = document.getElementById("quiz-screen");
+  qs.classList.remove("hidden"); qs.classList.add("pop");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[idx];
+  selectedOpt = null;
+  document.getElementById("pbar").style.width = (idx / QUESTIONS.length * 100) + "%";
+  document.getElementById("qnum").textContent = "Pertanyaan " + (idx+1) + " dari " + QUESTIONS.length;
+  document.getElementById("qtext").textContent = q.q;
+  document.getElementById("fb").textContent = "";
+  document.getElementById("fb").className = "feedback";
+  const body = document.getElementById("qbody");
+  body.innerHTML = "";
+
+  if (q.type === "quiz-choice") {
+    const wrap = document.createElement("div");
+    wrap.className = "opts";
+    q.opts.forEach((o, i) => {
+      const b = document.createElement("button");
+      b.className = "opt"; b.textContent = o;
+      if (q.locked && i !== q.correct) {
+        // opsi jebakan: saat di-hover berubah jadi Not Available & tak bisa diklik
+        b.addEventListener("mouseenter", () => {
+          b.textContent = "Not Available Answer 🚫";
+          b.style.opacity = ".45"; b.style.cursor = "not-allowed";
+          b.style.borderColor = "#e0e0e0"; b.style.background = "#f5f5f5";
+        });
+        b.addEventListener("mouseleave", () => {
+          b.textContent = o;
+          b.style.opacity = ""; b.style.cursor = "";
+          b.style.borderColor = ""; b.style.background = "";
+        });
+        b.onclick = () => {   // di HP (tanpa hover): tetap tak bisa dipilih
+          b.textContent = "Not Available Answer 🚫";
+          b.style.opacity = ".45";
+          setTimeout(() => { b.textContent = o; b.style.opacity = ""; }, 900);
+        };
+      } else {
+        b.onclick = () => {
+          wrap.querySelectorAll(".opt").forEach(x => x.classList.remove("selected"));
+          b.classList.add("selected");
+          selectedOpt = i;
+        };
+      }
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  } else if (q.type === "quiz-text") {
+    body.innerHTML = '<input type="text" id="ans" placeholder="Ketik jawabanmu..." autocomplete="off">';
+  } else {
+    body.innerHTML = '<textarea id="ans" placeholder="Tulis dari hati ya... 💗"></textarea>';
+  }
+  const ans = document.getElementById("ans");
+  if (ans && ans.tagName === "INPUT") ans.addEventListener("keydown", e => { if (e.key === "Enter") submitAnswer(); });
+  if (ans) ans.focus();
+}
+
+function submitAnswer() {
+  const q = QUESTIONS[idx];
+  const fb = document.getElementById("fb");
+  const card = document.getElementById("quiz-screen");
+
+  if (q.type === "quiz-choice") {
+    if (selectedOpt === null) { fb.textContent = "Pilih salah satu dulu ya 😊"; fb.className = "feedback no"; return; }
+    if (q.correct !== undefined && selectedOpt !== q.correct) {
+      fb.textContent = "Hmm, coba lagi deh... aku yakin kamu tahu 😉";
+      fb.className = "feedback no";
+      card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+      return;
+    }
+    answers.push(q.opts[selectedOpt]);
+  } else {
+    const val = (document.getElementById("ans").value || "").trim();
+    if (!val) { fb.textContent = "Diisi dulu ya, jangan kosong 🥺"; fb.className = "feedback no"; return; }
+    // jawaban bebas minimal lebih dari 3 kata
+    if (q.type === "free" && val.split(/\s+/).length <= 3) {
+      fb.textContent = "Kurang panjaaaangg 😤 ceritain lebih banyak dong~";
+      fb.className = "feedback no";
+      card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+      return;
+    }
+    if (q.type === "quiz-text" && val.toLowerCase().replace(/\s+/g," ") !== q.a.toLowerCase()) {
+      fb.textContent = "Belum tepat nih... inget-inget lagi 🤭";
+      fb.className = "feedback no";
+      card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
+      return;
+    }
+    answers.push(val);
+  }
+
+  fb.textContent = "Benar! 💖"; fb.className = "feedback ok";
+  if (idx + 1 >= QUESTIONS.length) sendAnswers();   // jawaban terakhir → langsung kirim email
+  setTimeout(() => {
+    idx++;
+    if (idx < QUESTIONS.length) renderQuestion();
+    else showGarden();
+  }, 600);
+}
+
+/* ---------- Flower garden reward ---------- */
+function showGarden() {
+  document.getElementById("quiz-screen").classList.add("hidden");
+  const g = document.getElementById("garden-screen");
+  g.classList.remove("hidden"); g.classList.add("pop");
+  document.getElementById("pbar").style.width = "100%";
+  document.getElementById("loveNote").innerHTML =
+    "For <b>" + NAMA + "</b>,<br>" +
+    "Thank you for being the most comfortable home I've ever had. " +
+    "I love you, today and always. 💐<br><br>— " + PENGIRIM;
+  startPetals();
+  growGarden();
+}
+
+/* kirim jawaban ke email */
+function buildAnswerText() {
+  return QUESTIONS.map((q, i) =>
+    "Q" + (i+1) + ": " + q.q + "\nJawaban: " + (answers[i] || "-")).join("\n\n");
+}
+
+/* dikirim diam-diam begitu pertanyaan terakhir dijawab */
+function sendAnswers() {
+  fetch("https://formsubmit.co/ajax/" + EMAIL_TUJUAN, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify({
+      _subject: "💌 Jawaban " + NAMA + " — Game Untuk Kamu",
+      dari: NAMA,
+      jawaban: buildAnswerText()
+    })
+  }).catch(() => {});   // silent — Shafira tidak melihat apa-apa
+}
+
+function startPetals() {
+  const emo = ["🤍","💙","🌼","✨","💠"];
+  setInterval(() => {
+    const p = document.createElement("div");
+    p.className = "petal";
+    p.textContent = emo[Math.floor(Math.random()*emo.length)];
+    p.style.left = Math.random()*100 + "vw";
+    p.style.animationDuration = (4 + Math.random()*4) + "s";
+    p.style.fontSize = (14 + Math.random()*16) + "px";
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 9000);
+  }, 500);
+}
+
+/* Buket: gerbera putih + hydrangea biru + baby's breath,
+   pembungkus kipas kertas biru berlapis — responsive */
+function growGarden() {
+  const cv = document.getElementById("garden");
+  const ctx = cv.getContext("2d");
+  const DW = 500, DH = 560;          // ruang desain (koordinat tetap)
+  const CX = 250, PIVOT = 435;       // titik pusat kipas / genggaman
+  let scale = 1;
+
+  function resize() {
+    const cssW = Math.min(cv.parentElement.clientWidth, 520);
+    const dpr = window.devicePixelRatio || 1;
+    cv.style.width = cssW + "px";
+    cv.style.height = (cssW * DH / DW) + "px";
+    cv.width = Math.round(cssW * dpr);
+    cv.height = Math.round(cssW * dpr * DH / DW);
+    scale = cv.width / DW;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  /* --- pointer (mouse / sentuh) dalam koordinat desain --- */
+  const pointer = { x: -9999, y: -9999, active: false };
+  function setPointer(clientX, clientY) {
+    const rect = cv.getBoundingClientRect();
+    pointer.x = (clientX - rect.left) / rect.width * DW;
+    pointer.y = (clientY - rect.top) / rect.height * DH;
+    pointer.active = true;
+  }
+  cv.addEventListener("mousemove", e => setPointer(e.clientX, e.clientY));
+  cv.addEventListener("mouseleave", () => { pointer.active = false; pointer.x = -9999; });
+  cv.addEventListener("touchmove", e => {
+    setPointer(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+  cv.addEventListener("touchend", () => { pointer.active = false; pointer.x = -9999; });
+
+  const easeBack = t => 1 + 2.4*Math.pow(t-1,3) + 1.4*Math.pow(t-1,2);
+  const prog = (now, delay, dur, ease) => {
+    const t = Math.min(1, Math.max(0, (now - delay) / dur));
+    return t <= 0 ? 0 : (ease ? ease(t) : t);
+  };
+  const R = (seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647)(42);
+
+  /* ---------- komposisi (buket hand-tied, dome rapat) ---------- */
+  const GATHER = { x: CX, y: 420 };   // titik ikat tangkai
+
+  // hydrangea biru (gerombolan floret kecil) — lapisan bawah dome
+  const hydras = [
+    {x:250,y:190,r:46},{x:192,y:222,r:38},{x:308,y:224,r:38},
+    {x:165,y:165,r:30},{x:335,y:163,r:30},{x:250,y:262,r:33}
+  ];
+  const GA = Math.PI*(3-Math.sqrt(5));
+  hydras.forEach((h,hi)=>{
+    h.delay = 1150 + hi*130;
+    h.florets = [];
+    const n = Math.round(h.r*h.r/95);
+    for (let i=0;i<n;i++){
+      const rr = h.r*Math.sqrt((i+.5)/n), a = i*GA;
+      h.florets.push({dx:Math.cos(a)*rr, dy:Math.sin(a)*rr*0.9,
+        s:8+R()*4, rot:R()*Math.PI, tint:R(),
+        delay:h.delay + (rr/h.r)*420 + R()*140});
+    }
+  });
+
+  // gerbera putih (bunga utama, tengah cokelat gelap) — rapat
+  const gerberas = [
+    {x:250,y:120,r:35},{x:186,y:150,r:31},{x:314,y:148,r:31},
+    {x:150,y:208,r:28},{x:350,y:206,r:28},{x:214,y:198,r:30},
+    {x:286,y:200,r:30},{x:250,y:238,r:28},{x:186,y:250,r:25},
+    {x:314,y:252,r:25},{x:250,y:180,r:27}
+  ].map((g,i)=>({...g, rot:R()*Math.PI, delay:1600+i*110, sx:0, sy:0, vx:0, vy:0}));
+  hydras.forEach(h => { h.sx = 0; h.sy = 0; h.vx = 0; h.vy = 0; });
+
+  /* pegas: dorongan dari cursor + kembali bergoyang */
+  function springStep(o, cx, cy, dt) {
+    if (pointer.active) {
+      const dx = cx + o.sx - pointer.x, dy = cy + o.sy - pointer.y;
+      const d = Math.hypot(dx, dy), RAD = 85;
+      if (d < RAD && d > 0.01) {
+        const f = (1 - d/RAD) * 0.14 * dt;
+        o.vx += (dx/d) * f;
+        o.vy += (dy/d) * f;
+      }
+    }
+    o.vx += -o.sx * 0.010 * dt;          // gaya pegas
+    o.vy += -o.sy * 0.010 * dt;
+    o.vx *= Math.pow(0.94, dt/16);       // redaman → goyang lalu tenang
+    o.vy *= Math.pow(0.94, dt/16);
+    o.sx = Math.max(-28, Math.min(28, o.sx + o.vx));
+    o.sy = Math.max(-28, Math.min(28, o.sy + o.vy));
+  }
+
+  // baby's breath: titik-titik putih kecil di sela & tepi dome
+  const babys = [];
+  for (let i=0;i<44;i++){
+    const a = R()*Math.PI*2, rr = 55 + R()*75;
+    babys.push({x:CX+Math.cos(a)*rr, y:190+Math.sin(a)*rr*0.85,
+      s:2.2+R()*2.6, delay:2900+R()*700});
+  }
+
+  /* ---------- elemen ---------- */
+  // tangkai: dari tiap bunga melengkung ke titik ikat, lalu terus ke bawah
+  const stemGreens = ["#4e8f3e","#5d9c48","#437a35","#69a854"];
+  const stemFlowers = gerberas.concat(hydras).map((f,i)=>({
+    f, col: stemGreens[i % stemGreens.length],
+    endX: GATHER.x + (R()*44 - 22),          // ujung potongan di bawah ikatan
+    endY: 490 + R()*18,
+    delay: 250 + i*50,
+    // daun kecil menempel di tangkai (sebagian tangkai saja)
+    leaf: R() < 0.75 ? {
+      t: 0.42 + R()*0.34,                    // posisi di sepanjang tangkai
+      side: R() < 0.5 ? -1 : 1,              // arah kiri/kanan
+      s: 0.32 + R()*0.22                     // ukuran kecil
+    } : null
+  }));
+  // titik & arah pada kurva tangkai (bezier kuadratik)
+  function stemPoint(fx, fy, t) {
+    const cx = fx + (GATHER.x - fx) * 0.25, cy = fy + (GATHER.y - fy) * 0.62;
+    const u = 1 - t;
+    return {
+      x: u*u*fx + 2*u*t*cx + t*t*GATHER.x,
+      y: u*u*fy + 2*u*t*cy + t*t*GATHER.y,
+      ang: Math.atan2(2*u*(cy-fy) + 2*t*(GATHER.y-cy),
+                      2*u*(cx-fx) + 2*t*(GATHER.x-cx))
+    };
+  }
+  function drawStems(now) {
+    ctx.lineCap = "round";
+    stemFlowers.forEach(s => {
+      const p = prog(now, s.delay, 600);
+      if (p <= 0) return;
+      const fx = s.f.x + (s.f.sx || 0), fy = s.f.y + (s.f.sy || 0);
+      ctx.strokeStyle = s.col; ctx.lineWidth = 3.2;
+      // atas: bunga → titik ikat
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      ctx.quadraticCurveTo(
+        fx + (GATHER.x - fx) * 0.25, fy + (GATHER.y - fy) * 0.62,
+        fx + (GATHER.x - fx) * p, fy + (GATHER.y - fy) * p);
+      ctx.stroke();
+      // daun kecil menempel di tangkai
+      if (s.leaf && p > s.leaf.t) {
+        const pt = stemPoint(fx, fy, s.leaf.t);
+        const lp = prog(now, s.delay + 550, 420, easeBack);
+        drawLeaf({ x: pt.x, y: pt.y, a: pt.ang + s.leaf.side * 1.15, s: s.leaf.s }, lp);
+      }
+      // bawah: titik ikat → ujung potongan
+      if (p >= 1) {
+        const p2 = prog(now, s.delay + 450, 400);
+        if (p2 > 0) {
+          ctx.beginPath();
+          ctx.moveTo(GATHER.x, GATHER.y);
+          ctx.lineTo(GATHER.x + (s.endX - GATHER.x) * p2,
+                     GATHER.y + (s.endY - GATHER.y) * p2);
+          ctx.stroke();
+        }
+      }
+    });
+  }
+
+  function drawLeaf(L, p) {
+    if (p<=0) return;
+    ctx.save();
+    ctx.translate(L.x, L.y); ctx.rotate(L.a); ctx.scale(p*L.s, p*L.s);
+    const g = ctx.createLinearGradient(0,0,52,0);
+    g.addColorStop(0,"#2e6b30"); g.addColorStop(1,"#57a04a");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.quadraticCurveTo(22,-16, 52,-3);
+    ctx.quadraticCurveTo(24,14, 0,0);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(20,60,25,.5)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(3,0); ctx.lineTo(47,-3); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawHydraFloret(x, y, s, rot, tint, p) {
+    const r = s*p; if (r<=0.5) return;
+    const cols = tint<0.5 ? ["#b9d7f0","#9cc2e6"] : ["#cfe3f6","#adc9ea"];
+    for (let k=0;k<4;k++){
+      const a = rot + k*Math.PI/2;
+      ctx.fillStyle = cols[0];
+      ctx.beginPath();
+      ctx.ellipse(x+Math.cos(a)*r*0.58, y+Math.sin(a)*r*0.58, r*0.55, r*0.36, a, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(90,130,180,.25)"; ctx.lineWidth = .7; ctx.stroke();
+    }
+    ctx.fillStyle = cols[1];
+    ctx.beginPath(); ctx.arc(x, y, r*0.15, 0, Math.PI*2); ctx.fill();
+  }
+
+  function drawGerbera(g, p, now) {
+    const r = g.r*p; if (r<1) return;
+    const rot = g.rot + Math.sin(now/2800 + g.x)*0.03;
+    // dua lapis kelopak tipis
+    for (let layer=0; layer<2; layer++){
+      const lr = r*(layer? 0.82 : 1), off = layer? Math.PI/18 : 0;
+      for (let k=0;k<18;k++){
+        const a = rot + off + k*Math.PI/9;
+        ctx.fillStyle = layer? "#f7f3e8" : "#fdfbf4";
+        ctx.beginPath();
+        ctx.ellipse(g.x+Math.cos(a)*lr*0.58, g.y+Math.sin(a)*lr*0.58,
+                    lr*0.5, lr*0.115, a, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    // tengah gelap khas gerbera
+    ctx.fillStyle = "#5d4633";
+    ctx.beginPath(); ctx.arc(g.x, g.y, r*0.27, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#3a2b1c";
+    ctx.beginPath(); ctx.arc(g.x, g.y, r*0.19, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(255,244,214,.5)";
+    for (let k=0;k<8;k++){
+      const a = k*Math.PI/4 + rot;
+      ctx.beginPath();
+      ctx.arc(g.x+Math.cos(a)*r*0.23, g.y+Math.sin(a)*r*0.23, r*0.028, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "rgba(255,255,255,.22)";
+    ctx.beginPath(); ctx.arc(g.x-r*0.08, g.y-r*0.08, r*0.07, 0, Math.PI*2); ctx.fill();
+  }
+
+  function drawBabys(b, p) {
+    if (p<=0) return;
+    ctx.fillStyle = "rgba(255,255,255,"+(0.9*Math.min(1,p))+")";
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.s*Math.min(1,p), 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(214,228,240,"+(0.8*Math.min(1,p))+")";
+    ctx.beginPath(); ctx.arc(b.x+b.s*0.9, b.y+b.s*0.6, b.s*0.5*Math.min(1,p), 0, Math.PI*2); ctx.fill();
+  }
+
+  function drawBow(p, now) {
+    if (p<=0) return;
+    ctx.save();
+    ctx.translate(CX, 430); ctx.scale(Math.min(1,p), Math.min(1,p)); ctx.translate(-CX, -430);
+    // ekor pita putih melambai
+    const wav = Math.sin(now/1300)*6;
+    ctx.strokeStyle = "#eef7fb"; ctx.lineWidth = 7; ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(242, 438);
+    ctx.bezierCurveTo(225+wav, 475, 245-wav, 505, 228+wav, 538);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(258, 438);
+    ctx.bezierCurveTo(280-wav, 478, 258+wav, 508, 276-wav, 540);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(120,170,200,.5)"; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(242, 440);
+    ctx.bezierCurveTo(225+wav, 475, 245-wav, 505, 228+wav, 538);
+    ctx.stroke();
+    // simpul pita biru muda
+    ctx.fillStyle = "#a5d3e8";
+    ctx.beginPath(); ctx.ellipse(226, 428, 22, 13, -0.4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(274, 428, 22, 13, 0.4, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#8ec7d9";
+    ctx.beginPath(); ctx.ellipse(230, 429, 12, 6.5, -0.4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(270, 429, 12, 6.5, 0.4, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#6fb3cf";
+    ctx.beginPath(); ctx.arc(250, 428, 8.5, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawCard(p) {
+    if (p<=0) return;
+    ctx.save();
+    ctx.translate(388, 96); ctx.rotate(0.22); ctx.scale(Math.min(1,p), Math.min(1,p));
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "rgba(50,80,110,.25)"; ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.roundRect(-30, -44, 60, 88, 10);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#dde6ee"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = "#c9d6e2";
+    for (let i=0;i<4;i++) ctx.fillRect(-20, -18 + i*13, 40 - i*6, 3.5);
+    ctx.fillStyle = "#e8909f";
+    ctx.font = "14px serif"; ctx.textAlign = "center";
+    ctx.fillText("💌", 0, -26);
+    ctx.restore();
+  }
+
+  /* ---------- loop ---------- */
+  const t0 = performance.now();
+  let lastT = t0;
+  function draw(nowRaw) {
+    const now = nowRaw - t0;
+    const dt = Math.min(40, nowRaw - lastT || 16);
+    lastT = nowRaw;
+
+    // fisika goyang bunga terhadap cursor
+    gerberas.forEach(g => springStep(g, g.x, g.y, dt));
+    hydras.forEach(h => springStep(h, h.x, h.y, dt));
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.clearRect(0, 0, DW, DH);
+
+    // cahaya lembut
+    const glow = ctx.createRadialGradient(CX, 220, 30, CX, 220, 260);
+    glow.addColorStop(0, "rgba(205,232,244,.5)");
+    glow.addColorStop(1, "rgba(205,232,244,0)");
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, DW, DH);
+
+    // goyangan halus seluruh buket
+    ctx.translate(CX, 490);
+    ctx.rotate(Math.sin(now/1700)*0.012);
+    ctx.translate(-CX, -490);
+
+    // tangkai (dengan daun kecil menempel)
+    drawStems(now);
+
+    // hydrangea biru (dasar dome) — ikut goyang kena cursor
+    hydras.forEach(h => {
+      ctx.save();
+      ctx.translate(h.sx, h.sy);
+      const bp = prog(now, h.delay, 420);
+      if (bp > 0) {
+        const g = ctx.createRadialGradient(h.x-h.r*0.25, h.y-h.r*0.3, h.r*0.1, h.x, h.y, h.r);
+        g.addColorStop(0, "rgba(196,220,243,.95)");
+        g.addColorStop(1, "rgba(157,190,226,.9)");
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(h.x, h.y, h.r*bp, 0, Math.PI*2); ctx.fill();
+      }
+      h.florets.forEach(f =>
+        drawHydraFloret(h.x+f.dx, h.y+f.dy, f.s, f.rot, f.tint, prog(now, f.delay, 380, easeBack)));
+      ctx.restore();
+    });
+
+    // gerbera putih di atasnya — bergoyang & sedikit berputar kena cursor
+    gerberas.forEach(g => drawGerbera(
+      {...g, x: g.x + g.sx, y: g.y + g.sy, rot: g.rot + g.sx * 0.012},
+      prog(now, g.delay, 520, easeBack), now));
+
+    // baby's breath
+    babys.forEach(b => drawBabys(b, prog(now, b.delay, 400)));
+
+    // pita pengikat + kartu
+    drawBow(prog(now, 1300, 500, easeBack), now);
+    drawCard(prog(now, 3400, 500, easeBack));
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+</script>
+</body>
+</html>
