@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="images/gift.png" type="image/x-icon">
+<title>My Pretty Princess 💌</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #4a2331;
+    --gold: #b8895f;
+    --rose: #d17a95;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, #fff3f6 0%, #fdf0f2 40%, #f8ebe4 100%);
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 8vh 6vw 10vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+    color: var(--rose);
+    margin-bottom: .3rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: var(--gold);
+    font-size: .95rem;
+    margin-bottom: 6vh;
+  }
+
+  .divider {
+    text-align: center;
+    color: var(--gold);
+    margin: 4vh 0;
+    opacity: .6;
+  }
+
+  p.reveal {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  p.reveal.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .signature {
+    text-align: right;
+    font-style: italic;
+    color: var(--rose);
+    margin-top: 2rem;
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin: 6vh auto 0;
+    color: var(--rose);
+    text-decoration: none;
+    font-size: .95rem;
+    border: 1px solid var(--rose);
+    border-radius: 30px;
+    padding: 10px 26px;
+    width: fit-content;
+    transition: all .2s ease;
+  }
+  .back-link:hover {
+    background: var(--rose);
+    color: #fff;
+  }
+
+  .sound-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    background: rgba(255,255,255,.7);
+    border: 1px solid var(--rose);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgm" src="song/bergema selamanya.mp3" loop></audio>
+<button class="sound-toggle" id="soundToggle" title="Mute/unmute music">🔊</button>
+
+<div class="wrap">
+  <h1>My Pretty Princess</h1>
+  <p class="subtitle">listen carefully okay...</p>
+
+  <p class="reveal">I know you're tired, but how even more beautiful when you smile through the mess inside. The road you walk isn't easy, yet you keep moving without giving up, and that makes me proud every single time I see you. I'm truly proud of you, princess.</p>
+
+  <p class="reveal">I know you've been tired lately, not just the kind of tired that rest can fix, but the one that lives deep inside your heart. Still, you never give up. You keep going, even when everything feels heavy on your shoulders. You keep showing up for yourself and for everyone around you, and that's something truly beautiful.</p>
+
+  <p class="reveal">Please, take care of yourself, your body, your mind, your emotions. Rest when you need to. Cry if you must. Let yourself feel, it doesn't make you weak, it makes you real. You're allowed to slow down. You're allowed to breathe. You deserve love, you deserve peace, you deserve rest, you deserve happiness that feels safe and soft. You're worth it all.</p>
+
+  <div class="divider">♡</div>
+
+  <p class="reveal">Even if I can't be there all the time, my support never fades. My heart is always with you, quietly cheering for you, loving you in every way I know how. So keep walking, my love.</p>
+
+  <p class="reveal">You're not alone, love. You never were. The road ahead might not be easy, but I believe in you, in your strength, your patience, your beautiful soul. And no matter how far life takes us, you'll always have someone who's proud of you, who's rooting for you, and who loves you more than words can say.</p>
+
+  <p class="reveal">I just wanna make you the happiest you've ever been. I want to make you feel safe and loved and comforted. I want you to know that you can come to me when you're not okay, when your eyes are filled with tears, and I'll hold you till you're a little more okay. I'm always here for you. Love you at your best and at your worst. Nothing's gonna change that.</p>
+
+  <p class="reveal">And someday, I pray that God makes it easy for us to become one, to build our own little family together.</p>
+
+  <p class="signature">— kalfin ganteng hehe :)</p>
+
+  <a href="flower.html" class="back-link">back to you 🌸</a>
+</div>
+
+<script>
+  const targets = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.2 });
+  targets.forEach(t => io.observe(t));
+
+  // background music: try autoplay, else start on first interaction
+  const bgm = document.getElementById('bgm');
+  const soundToggle = document.getElementById('soundToggle');
+
+  bgm.volume = 0.25;
+
+  function tryPlay() {
+    bgm.play().catch(() => {});
+  }
+  tryPlay();
+  ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt =>
+    document.addEventListener(evt, tryPlay, { once: true, passive: true })
+  );
+
+  soundToggle.addEventListener('click', () => {
+    bgm.muted = !bgm.muted;
+    soundToggle.textContent = bgm.muted ? '🔇' : '🔊';
+    tryPlay();
+  });
+</script>
+
+</body>
+</html>
