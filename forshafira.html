@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="images/gift.png" type="image/x-icon">
+<title>For Shafira 💌</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #4a2331;
+    --gold: #b8895f;
+    --rose: #d17a95;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, #fff3f6 0%, #fdf0f2 40%, #f8ebe4 100%);
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 8vh 6vw 10vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+    color: var(--rose);
+    margin-bottom: .3rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-style: italic;
+    color: var(--gold);
+    font-size: .95rem;
+    margin-bottom: 6vh;
+  }
+
+  .divider {
+    text-align: center;
+    color: var(--gold);
+    margin: 4vh 0;
+    opacity: .6;
+  }
+
+  p.reveal {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  p.reveal.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .signature {
+    text-align: right;
+    font-style: italic;
+    color: var(--rose);
+    margin-top: 2rem;
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin: 6vh auto 0;
+    color: var(--rose);
+    text-decoration: none;
+    font-size: .95rem;
+    border: 1px solid var(--rose);
+    border-radius: 30px;
+    padding: 10px 26px;
+    width: fit-content;
+    transition: all .2s ease;
+  }
+  .back-link:hover {
+    background: var(--rose);
+    color: #fff;
+  }
+
+  .sound-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    background: rgba(255,255,255,.7);
+    border: 1px solid var(--rose);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<audio id="bgm" src="song/bergema selamanya.mp3" loop></audio>
+<button class="sound-toggle" id="soundToggle" title="Mute/unmute music">🔊</button>
+
+<div class="wrap">
+  <h1>For Shafira</h1>
+  <p class="subtitle">listen carefully okay...</p>
+
+  <p class="reveal">To my sweet girl, i just want to take a moment to remind you how much you mean to me. You have this incredible way of making everything brighter just by being yourself, and i feel so lucky to have you by my side. Thank you for your kindness, your laughs, and for being the best part of my life.</p>
+
+  <p class="reveal">I am so proud of you, this beautiful, amazing girl. You deserve so much more than the world. You're such an angel, you're really strong, and you're doing your absolute best to deal with any problems you're facing — you would never give up, no matter how hard it gets. You make me want to try my best to deal with my own problems too. You might not realize it, but you've helped me a lot, and i don't know how to ever repay you. So in case you haven't heard this from anyone recently, coming from me: i'm so proud of you, babe.</p>
+
+  <div class="divider">♡</div>
+
+  <p class="reveal">Even on my hardest days, one notification from you is enough to make me smile and feel a little better. Thank you for being in my life. Having you around is one of the best things that's happened to me.</p>
+
+  <p class="reveal">And if i choose you, i'm choosing your good days, your bad days, your angry days, your insecure days, your quiet days, and every day between — because love was never meant to only exist when everything feels perfect. I love you more than words can say.</p>
+
+  <p class="reveal">I pray that Allah unites us together, eases every step of our journey, keeps us far away from every kind of temptation, and makes us a family filled with sakinah, mawaddah, and rahmah — tranquility, love, and mercy.</p>
+
+  <p class="signature">— kalfin ganteng hehe :)</p>
+
+  <a href="flower.html" class="back-link">back to you 🌸</a>
+</div>
+
+<script>
+  const targets = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.2 });
+  targets.forEach(t => io.observe(t));
+
+  // background music: try autoplay, else start on first interaction
+  const bgm = document.getElementById('bgm');
+  const soundToggle = document.getElementById('soundToggle');
+
+  bgm.volume = 0.25;
+
+  function tryPlay() {
+    bgm.play().catch(() => {});
+  }
+  tryPlay();
+  ['click', 'touchstart', 'keydown', 'scroll'].forEach(evt =>
+    document.addEventListener(evt, tryPlay, { once: true, passive: true })
+  );
+
+  soundToggle.addEventListener('click', () => {
+    bgm.muted = !bgm.muted;
+    soundToggle.textContent = bgm.muted ? '🔇' : '🔊';
+    tryPlay();
+  });
+</script>
+
+</body>
+</html>

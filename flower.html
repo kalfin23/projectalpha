@@ -320,11 +320,32 @@
   <!-- Games Button (disabled) -->
   <a href="javascript:void(0)" class="games-btn" aria-disabled="true" style="opacity:.4; pointer-events:none; cursor:not-allowed;">🎮 Games</a>
 
-  <!-- Read Me Button -->
-  <a href="Aboutyou.html" class="games-btn" style="right: auto; left: 20px;">📖 Read Me !!</a>
+  <!-- Read Me Dropdown -->
+  <div class="readme-dropdown">
+    <button type="button" class="games-btn readme-toggle" style="right: auto; left: 20px;">📖 Read Me !!</button>
+    <div class="readme-menu">
+      <a href="Aboutyou.html">💌 About You</a>
+      <a href="forshafira.html">🌷 For Shafira</a>
+    </div>
+  </div>
 </body>
 
 </html>
 
 <!-- Import Javascript -->
 <script src="js/main.js"></script>
+<script>
+  const readmeDropdown = document.querySelector('.readme-dropdown');
+  const readmeToggle = document.querySelector('.readme-toggle');
+
+  readmeToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    readmeDropdown.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!readmeDropdown.contains(e.target)) {
+      readmeDropdown.classList.remove('open');
+    }
+  });
+</script>
